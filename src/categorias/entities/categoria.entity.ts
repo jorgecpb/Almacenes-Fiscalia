@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Categoria {
@@ -6,19 +6,36 @@ export class Categoria {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column('text',{
-        
+    @Column({
+        type: 'text',
         unique: true
     })
     nombre: string;
 
-    @Column('text',{
+    @Column({
+        type: 'text',
         unique: false
     })
     descripcion: string;
 
-    @Column('boolean',{
+    @Column({
+        type: 'boolean',
         default: true
     })
-    estaActivo: boolean;
+    esta_activo: boolean;
+
+    @BeforeInsert()
+    checkDescripcionInsert(){
+        if(!this.descripcion){
+            this.descripcion = this.nombre
+        }
+
+        this.descripcion = this.descripcion
+            .toLowerCase()
+            .replaceAll(' ','_')
+            .replaceAll("'",'')
+    }
+
+
+    // @BeforeUpdate()
 }
