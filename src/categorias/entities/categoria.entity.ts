@@ -1,4 +1,5 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Producto } from "src/productos/entities/producto.entity";
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Categoria {
@@ -24,10 +25,19 @@ export class Categoria {
     })
     esta_activo: boolean;
 
+
+    //Relación con Productos
+    @OneToMany(
+        () => Producto,
+        (producto) => producto.categoria,
+        {cascade: true}
+    )
+    productos?: Producto[];
+
     @BeforeInsert()
     checkDescripcionInsert(){
         if(!this.descripcion){
-            this.descripcion = this.nombre
+            this.descripcion = this.nombre+ ' descripcion'
         }
 
         this.descripcion = this.descripcion
@@ -37,5 +47,11 @@ export class Categoria {
     }
 
 
-    // @BeforeUpdate()
+    @BeforeUpdate()
+    checkDescripcionUpdate(){
+        this.descripcion = this.descripcion
+            .toLowerCase()
+            .replaceAll(' ','_')
+            .replaceAll("'",'')
+    }
 }

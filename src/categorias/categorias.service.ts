@@ -1,11 +1,13 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, 
+        Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { UpdateCategoriaDto } from './dto/update-categoria.dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
+import { UpdateCategoriaDto } from './dto/update-categoria.dto';
 import { Categoria } from './entities/categoria.entity';
-import { PaginationDto } from 'src/common/dtos/paginatio.dto';
+import {validate as isUUID} from 'uuid';
 
 @Injectable()
 export class CategoriasService {
@@ -41,17 +43,44 @@ export class CategoriasService {
     })
   }
 
-  async findOne(id: string) {
-    const categoria = await this.categoriaRepository.findOneBy({id})
+  async findOne(term: string) {
+    let categoria: Categoria;
+
+    if (isUUID(term)) {
+      categoria = await this.categoriaRepository.findOneBy({id: term});
+    } else{
+      // categoria = await this.categoriaRepository.findOneBy({nombre: term});
+
+      const queryBuilder = this.categoriaRepository.createQueryBuilder();
+      categoria = await queryBuilder
+        .where('UPPER(nombre) =:nombre or LOWER(descripcion)=:descripcion',{
+          nombre: term.toUpperCase(),
+          descripcion: term.toLowerCase(),
+        }).getOne();
+    }
 
     if (!categoria) {
-      throw new NotFoundException(`Product with id ${id} no encontrado`)
+      throw new NotFoundException(`Categoria con ${term} no encontrado`)
     }
     return categoria;
   }
 
-  update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
-    return `This action updates a #${id} categoria`;
+  async update(id: string, updateCategoriaDto: UpdateCategoriaDto) {
+    const categoria = await this.categoriaRepository.preload({
+      id: id,
+      ...updateCategoriaDto
+    }) 
+
+    if (!categoria) throw new NotFoundException(`Categoria with id: ${id} not found`)
+
+    try {
+      await this.categoriaRepository.save(categoria)
+      return categoria;
+      
+    } catch (error) {
+      this.handleDBExceptions(error)
+      
+    }
   }
 
   async remove(id:string) {

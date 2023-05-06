@@ -3,7 +3,7 @@ import { CategoriasService } from './categorias.service';
 
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
-import { PaginationDto } from 'src/common/dtos/paginatio.dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 @Controller('categorias')
 export class CategoriasController {
@@ -20,14 +20,17 @@ export class CategoriasController {
     return this.categoriasService.findAll(paginationDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.categoriasService.findOne(id);
+  @Get(':term')
+  findOne(@Param('term') term:string) {
+    return this.categoriasService.findOne(term);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCategoriaDto: UpdateCategoriaDto) {
-    return this.categoriasService.update(+id, updateCategoriaDto);
+  update(
+    @Param('id') id: string, 
+    @Body() updateCategoriaDto: UpdateCategoriaDto) 
+    {
+    return this.categoriasService.update(id, updateCategoriaDto);
   }
 
   @Delete(':id')
