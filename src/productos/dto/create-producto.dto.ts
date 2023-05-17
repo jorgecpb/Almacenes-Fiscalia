@@ -16,11 +16,9 @@ export class CreateProductoDto {
 
     @IsBoolean()
     @IsOptional()
-    esta_activo?: boolean;
+    estaActivo?: boolean;
 
     @IsString()
-    // @IsOptional()
     categoriaId: string;
-
     
 }

@@ -20,10 +20,11 @@ export class Categoria {
     descripcion: string;
 
     @Column({
+        name: 'esta_activo',
         type: 'boolean',
         default: true
     })
-    esta_activo: boolean;
+    estaActivo: boolean;
 
 
     //Relación con Productos

@@ -9,6 +9,7 @@ import { UpdateProductoDto } from './dto/update-producto.dto';
 import { Producto } from './entities/producto.entity';
 import {validate as isUUID } from 'uuid';
 import { Categoria } from 'src/categorias/entities/categoria.entity';
+import { CreateCategoriaDto } from 'src/categorias/dto/create-categoria.dto';
 
 @Injectable()
 export class ProductosService {
@@ -18,16 +19,18 @@ export class ProductosService {
   constructor(
     @InjectRepository(Producto)
     private readonly productoRepository: Repository<Producto>,
+
     @InjectRepository(Categoria)
     private readonly categoriaRepository: Repository<Categoria>,
   ){}
 
   async create(createProductoDto: CreateProductoDto) {
     try {
-      const categoria = await this.categoriaRepository.findOne(
-        createProductoDto.categoriaId,
+      const categoria = await this.categoriaRepository.findOneBy(
+        {id: createProductoDto.categoriaId}
       );
       const producto = this.productoRepository.create(createProductoDto);
+      producto.categoria = categoria
       await this.productoRepository.save(producto)
 
       return producto;
