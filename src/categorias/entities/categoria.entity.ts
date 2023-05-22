@@ -4,8 +4,8 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany, PrimaryColumn, P
 @Entity()
 export class Categoria {
 
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+    @PrimaryGeneratedColumn()
+    id: number;
 
     @Column({
         type: 'text',

@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString, MinLength } from "class-validator";
+import { IsBoolean, IsNumber, IsOptional, IsString, MinLength } from "class-validator";
 
 export class CreateProductoDto {
 
@@ -18,7 +18,7 @@ export class CreateProductoDto {
     @IsOptional()
     estaActivo?: boolean;
 
-    @IsString()
-    categoriaId: string;
+    @IsNumber()
+    categoriaId: number;
     
 }

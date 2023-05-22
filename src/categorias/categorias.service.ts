@@ -44,28 +44,33 @@ export class CategoriasService {
   }
 
   async findOne(term: string) {
+    
     let categoria: Categoria;
 
-    if (isUUID(term)) {
-      categoria = await this.categoriaRepository.findOneBy({id: term});
-    } else{
-      // categoria = await this.categoriaRepository.findOneBy({nombre: term});
-
+    // if(isNaN(+term)){
+      
+    //   console.log('Está ingresando a la condición');
+    //   categoria = await this.categoriaRepository.findOneBy({id: +term});
+    // }
+    // else{
+      
       const queryBuilder = this.categoriaRepository.createQueryBuilder();
       categoria = await queryBuilder
-        .where('UPPER(nombre) =:nombre or LOWER(descripcion)=:descripcion',{
+        .where('UPPER(nombre) =:nombre or LOWER(descripcion)=:descripcion' ,{
           nombre: term.toUpperCase(),
           descripcion: term.toLowerCase(),
+          id: term
+          //TODO: convertir el id en entero
         }).getOne();
-    }
+    
 
     if (!categoria) {
-      throw new NotFoundException(`Categoria con ${term} no encontrado`)
+      throw new NotFoundException(`Categoria con el criterio: ${term} no encontrado`)
     }
     return categoria;
   }
 
-  async update(id: string, updateCategoriaDto: UpdateCategoriaDto) {
+  async update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
     const categoria = await this.categoriaRepository.preload({
       id: id,
       ...updateCategoriaDto
@@ -83,8 +88,8 @@ export class CategoriasService {
     }
   }
 
-  async remove(id:string) {
-    const categoria = await this.findOne(id);
+  async remove(id:number) {
+    const categoria = await this.categoriaRepository.findOneBy({id: +id});
      await this.categoriaRepository.remove(categoria)
 
     return 'Categoría eliminada correctamente'

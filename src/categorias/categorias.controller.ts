@@ -27,14 +27,14 @@ export class CategoriasController {
 
   @Patch(':id')
   update(
-    @Param('id') id: string, 
+    @Param('id') id: number, 
     @Body() updateCategoriaDto: UpdateCategoriaDto) 
     {
-    return this.categoriasService.update(id, updateCategoriaDto);
+    return this.categoriasService.update(+id, updateCategoriaDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.categoriasService.remove(id);
+  remove(@Param('id') id: number) {
+    return this.categoriasService.remove(+id);
   }
 }
