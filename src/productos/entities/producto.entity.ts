@@ -3,8 +3,8 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "t
 
 @Entity()
 export class Producto {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+    @PrimaryGeneratedColumn()
+    id: number;
 
     @Column({
         type: 'text',
@@ -26,10 +26,11 @@ export class Producto {
     imagen: string;
 
     @Column({
+        name: 'esta_activo',
         type: 'boolean',
         default: true
     })
-    esta_activo: boolean;
+    estaActivo: boolean;
 
     //Relacion con Categorias
     @ManyToOne(

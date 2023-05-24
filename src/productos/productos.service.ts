@@ -55,8 +55,8 @@ export class ProductosService {
 
     let producto: Producto;
   
-    if(isUUID(term)){
-      producto = await this.productoRepository.findOneBy({id: term});
+    if(!isNaN(Number(term))){
+      producto = await this.productoRepository.findOneBy({id: +term});
     } else{
 
       const queryBuilder = this.productoRepository.createQueryBuilder();
@@ -78,8 +78,8 @@ export class ProductosService {
     return `This action updates a #${id} producto`;
   }
 
-  async remove(id: string) {
-    const producto = await this.findOne(id);
+  async remove(id: number) {
+    const producto = await this.productoRepository.findOneBy({id: +id});
     await this.productoRepository.remove(producto)
 
     return `Producto con id: ${id} eliminado correctamente`;

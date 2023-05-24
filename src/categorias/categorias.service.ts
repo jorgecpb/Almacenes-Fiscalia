@@ -7,7 +7,7 @@ import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
 import { Categoria } from './entities/categoria.entity';
-import {validate as isUUID} from 'uuid';
+// import {validate as isUUID} from 'uuid';
 
 @Injectable()
 export class CategoriasService {
@@ -47,22 +47,17 @@ export class CategoriasService {
     
     let categoria: Categoria;
 
-    // if(isNaN(+term)){
+    if(!isNaN(Number(term))){
+      categoria = await this.categoriaRepository.findOneBy({id:+term})
       
-    //   console.log('Está ingresando a la condición');
-    //   categoria = await this.categoriaRepository.findOneBy({id: +term});
-    // }
-    // else{
-      
+    } else{
       const queryBuilder = this.categoriaRepository.createQueryBuilder();
       categoria = await queryBuilder
         .where('UPPER(nombre) =:nombre or LOWER(descripcion)=:descripcion' ,{
           nombre: term.toUpperCase(),
           descripcion: term.toLowerCase(),
-          id: term
-          //TODO: convertir el id en entero
         }).getOne();
-    
+      }
 
     if (!categoria) {
       throw new NotFoundException(`Categoria con el criterio: ${term} no encontrado`)
